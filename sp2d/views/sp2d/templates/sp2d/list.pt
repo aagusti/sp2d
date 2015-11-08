@@ -143,8 +143,10 @@
             else alert('Pilih Baris yang akan di hapus');
         });
         $('#btn_csv').click(function () {
-            if (rows_selected.length>0)
+            if (rows_selected.length>0){
                 window.location = oTableUrl+'/csv?data='+rows_selected;
+                rows_selected = [];
+            }
             else alert('Pilih Baris yang akan di export');
         });
         $("#checkAll").click(function () {
