@@ -146,6 +146,7 @@
             if (rows_selected.length>0){
                 window.location = oTableUrl+'/csv?data='+rows_selected;
                 rows_selected = [];
+                $('#table1 tbody input[type="checkbox"]:checked').trigger('click');
             }
             else alert('Pilih Baris yang akan di export');
         });
