@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *.pyc
+
 # C extensions
 *.so
 
@@ -36,6 +37,7 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
+.coverage
 .coverage.*
 .cache
 nosetests.xml
