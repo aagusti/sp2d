@@ -211,3 +211,34 @@ class view_routes(BaseViews):
         return dict(row=row,
                      form=form.render())
 
+    ##########                    
+    # CSV #
+    ##########    
+        
+    @view_config(route_name='group-routes-csv', renderer='csv',
+                 permission='read')
+    def export_csv(self):
+        request = self.request
+        
+        query = DBSession.query(GroupRoutePermission.group_id, GroupRoutePermission.route_id, 
+                                Group.group_name, Route.nama.label('route_nama')
+                                ).join(Group).join(Route
+                                ).order_by(Group.group_name, Route.nama
+                                )
+                                          
+        r = query.first()
+        header = r.keys()
+        query = query.all()
+        rows = []
+        for item in query:
+            rows.append(list(item))
+
+        # override attributes of response
+        filename = 'group_route%s.csv' % datetime.now().strftime('%Y%m%d%H%M%S')
+
+        self.request.response.content_disposition = 'attachment;filename=' + filename
+
+        return {
+          'header': header,
+          'rows': rows,
+        }
