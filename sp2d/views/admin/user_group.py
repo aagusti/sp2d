@@ -104,12 +104,12 @@ def form_validator(form, value):
 class AddSchema(colander.Schema):
     group_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/group/act/headofnama',
+            values = '/group/headofnama/act',
             min_length=1)
             
     user_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/user/act/headofnama',
+            values = '/user/headofnama/act',
             min_length=1)
             
     user_name = colander.SchemaNode(
