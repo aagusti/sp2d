@@ -31,16 +31,19 @@ def deferred_source_type(node, kw):
 class AddSchema(colander.Schema):
     group_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/group/act/headofnama',
+            limit=10,
+            values = '/group/headofnama/act',
             min_length=1)
 
     route_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/routes/act/headof',
+            limit=10,
+            values = '/routes/headof/act',
             min_length=1)
 
     group_id  = colander.SchemaNode(
                     colander.Integer(),
+                    widget=widget.HiddenWidget(),
                     oid = 'group_id')
     group_nm  = colander.SchemaNode(
                     colander.String(),
@@ -48,6 +51,7 @@ class AddSchema(colander.Schema):
                     oid = 'group_nm')
     route_id  = colander.SchemaNode(
                     colander.Integer(),
+                    widget=widget.HiddenWidget(),
                     oid = 'route_id')
     route_nm  = colander.SchemaNode(
                     colander.String(),
