@@ -204,12 +204,14 @@
         });
 
         $('#btn_edit').click(function () {
-            if (mID) window.location = '/user/group/'+mID+'/edit?gid='+mGID;
+            //if (mID) window.location = '/user/group/'+mID+'/edit?gid='+mGID;
+            if (mID) window.location = '/user/group/'+mID+'/'+mGID+'/edit';
             else alert('Pilih Baris yang akan di edit');
         });
 
         $('#btn_delete').click(function () {
-            if (mID) window.location = '/user/group/'+mID+'/delete?gid='+mGID;
+            //if (mID) window.location = '/user/group/'+mID+'/delete?gid='+mGID;
+            if (mID) window.location = '/user/group/'+mID+'/'+mGID+'/delete';
             else alert('Pilih Baris yang akan di hapus');
         });
         })
