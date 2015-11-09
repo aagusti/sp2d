@@ -222,3 +222,30 @@ class view_app(BaseViews):
         return dict(row=row,
                      form=form.render())
 
+    ##########                    
+    # CSV #
+    ##########    
+        
+    @view_config(route_name='app-csv', renderer='csv',
+                 permission='read')
+    def export_csv(self):
+        request = self.request
+        
+        query = DBSession.query(App.kode, App.nama, App.tahun, App.disabled)
+                                          
+        r = query.first()
+        header = r.keys()
+        query = query.all()
+        rows = []
+        for item in query:
+            rows.append(list(item))
+
+        # override attributes of response
+        filename = 'app%s.csv' % datetime.now().strftime('%Y%m%d%H%M%S')
+
+        self.request.response.content_disposition = 'attachment;filename=' + filename
+
+        return {
+          'header': header,
+          'rows': rows,
+        }
