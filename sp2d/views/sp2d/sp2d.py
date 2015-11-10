@@ -74,22 +74,23 @@ class view_sp2d(BaseViews):
         
         if url_dict['act']=='grid':
             columns = []
-            columns.append(ColumnDT('sp2dno'))
-            columns.append(ColumnDT('sp2dno'))
-            columns.append(ColumnDT('sp2ddate',   filter = self._DT_strftime))
-            columns.append(ColumnDT('paymentfor'))
-            columns.append(ColumnDT('sp2damount', filter = self._DT_number_format))
-            columns.append(ColumnDT('ppnamount',  filter = self._DT_number_format))
-            columns.append(ColumnDT('pphamount',  filter = self._DT_number_format))
-            columns.append(ColumnDT('pot1num',    filter = self._DT_number_format))
-            columns.append(ColumnDT('sp2dnetto',  filter = self._DT_number_format))
-            columns.append(ColumnDT('bknama'))
-            columns.append(ColumnDT('bankposnm'))
-            columns.append(ColumnDT('bankaccount'))
+            columns.append(ColumnDT('sp2d.sp2dno'))
+            columns.append(ColumnDT('advno'))
+            columns.append(ColumnDT('sp2d.sp2dno'))
+            columns.append(ColumnDT('sp2d.sp2ddate',   filter = self._DT_strftime))
+            columns.append(ColumnDT('sp2d.paymentfor'))
+            columns.append(ColumnDT('sp2d.sp2damount', filter = self._DT_number_format))
+            columns.append(ColumnDT('sp2d.ppnamount',  filter = self._DT_number_format))
+            columns.append(ColumnDT('sp2d.pphamount',  filter = self._DT_number_format))
+            columns.append(ColumnDT('sp2d.pot1num',    filter = self._DT_number_format))
+            columns.append(ColumnDT('sp2d.sp2dnetto',  filter = self._DT_number_format))
+            columns.append(ColumnDT('sp2d.bknama'))
+            columns.append(ColumnDT('sp2d.bankposnm'))
+            columns.append(ColumnDT('sp2d.bankaccount'))
             
-            query = SipkdDBSession.query(Sp2d).join(Sp2dAdviceDet).\
+            query = SipkdDBSession.query(Sp2dAdviceDet).join(Sp2d).\
                                    filter(Sp2d.sp2dno==Sp2dAdviceDet.sp2dno)
-            rowTable = DataTables(req, Sp2d, query, columns)
+            rowTable = DataTables(req, Sp2dAdviceDet, query, columns)
             return rowTable.output_result()
             
         elif url_dict['act']=='csv':
@@ -236,12 +237,17 @@ class view_sp2d(BaseViews):
                  permission='read')
     def export_csv(self):
         request = self.request
-        
-        query = SipkdDBSession.query(Sp2d.sp2dno, Sp2d.sp2ddate, Sp2d.paymentfor, Sp2d.sp2damount, 
+        query = SipkdDBSession.query(Sp2dAdviceDet.advno, (func.right(Sp2d.sp2dno,5)+
+                                                           func.coalesce(Sp2d.infix,Sp2d.infix,'')+'/'+  
+                                                           Sp2d.sp2dtype+'/'+
+                                                           func.left(Sp2d.sp2dno,4) ).label('sp2dno'), 
+                                     Sp2d.sp2ddate, Sp2d.paymentfor, Sp2d.sp2damount, 
                                      Sp2d.ppnamount, Sp2d.pphamount, 
                                      (Sp2d.pot1num+Sp2d.pot2num+Sp2d.pot3num+Sp2d.pot4num+Sp2d.pot5num).label("potongan"),  
                                      Sp2d.sp2dnetto, Sp2d.bknama, Sp2d.bankposnm, Sp2d.bankaccount).\
-                               filter(Sp2d.sp2dno.in_(request.params['data'].split(',')))
+                               join(Sp2d).\
+                               filter(Sp2d.sp2dno==Sp2dAdviceDet.sp2dno,
+                                      Sp2d.sp2dno.in_(request.params['data'].split(',')))
                                           
         r = query.first()
         header = r.keys()

@@ -6,7 +6,8 @@
         <thead>
             <tr>
                 <th><input type="checkbox" value="1" id="checkAll" name="checkAll"></th>
-                <th>Kode</th>
+                <th>Advice</th>
+                <th>SP2D</th>
                 <th>Tanggal</th>
                 <th>Uraian</th>
                 <th>Total</th>
@@ -70,12 +71,12 @@
           "aoColumnDefs": [{
                         "bSearchable": true,
                         "bVisible": true,
-                        "aTargets": [1,3,11]
+                        "aTargets": [1,2,3,11]
                          },{
                         "bSearchable": false,
                         "bVisible": true,
                         "bSortable": false,
-                        "aTargets": [0,2,4,5,6,7,8,9,10]
+                        "aTargets": [0,3,5,6,7,8,9,10,11]
                         },{
                          'targets': 0,
                          'searchable': false,
@@ -88,6 +89,7 @@
                     ],
           "aoColumns": [
               {"width": "30px", "sClass":"center"},
+              {"width": "80px"},
               {"width": "80px"},
               {"width": "75px"},
               {"width": "300px", "sClass":"left"},

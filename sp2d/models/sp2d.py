@@ -14,6 +14,8 @@ from sqlalchemy import (
     UniqueConstraint,
     Numeric
 )
+from sqlalchemy.orm import (
+    relationship,backref    )
     
 class Sp2dAdvice(SipkdBase):
     __tablename__  = 'advice'
@@ -45,7 +47,8 @@ class Sp2dAdviceDet(SipkdBase):
     bpph23      = Column(Numeric)
     nossp       = Column(String(250)) 
     tglsetor    = Column(DateTime)
-  
+    sp2d        = relationship("Sp2d", backref="advicedet")
+
 class Sp2d(SipkdBase):
     __tablename__  = 'sp2d'
     #__table_args__ = {'extend_existing':True,'autoload':True}   
