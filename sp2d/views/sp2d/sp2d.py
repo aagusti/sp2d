@@ -87,7 +87,7 @@ class view_sp2d(BaseViews):
             columns.append(ColumnDT('sp2d.bknama'))
             columns.append(ColumnDT('sp2d.bankposnm'))
             columns.append(ColumnDT('sp2d.bankaccount'))
-            
+            columns.append(ColumnDT('sp2d.npwp'))
             query = SipkdDBSession.query(Sp2dAdviceDet).join(Sp2d).\
                                    filter(Sp2d.sp2dno==Sp2dAdviceDet.sp2dno)
             rowTable = DataTables(req, Sp2dAdviceDet, query, columns)
@@ -237,14 +237,16 @@ class view_sp2d(BaseViews):
                  permission='read')
     def export_csv(self):
         request = self.request
-        query = SipkdDBSession.query(Sp2dAdviceDet.advno, (func.right(Sp2d.sp2dno,5)+
-                                                           func.coalesce(Sp2d.infix,Sp2d.infix,'')+'/'+  
-                                                           Sp2d.sp2dtype+'/'+
-                                                           func.left(Sp2d.sp2dno,4) ).label('sp2dno'), 
+        query = SipkdDBSession.query(Sp2dAdviceDet.advno, 
+                                      (func.right(Sp2d.sp2dno,5)+
+                                       func.coalesce(Sp2d.infix,Sp2d.infix,'')+'/'+  
+                                       Sp2d.sp2dtype+'/'+
+                                       func.left(Sp2d.sp2dno,4) ).label('sp2dno'), 
                                      Sp2d.sp2ddate, Sp2d.paymentfor, Sp2d.sp2damount, 
                                      Sp2d.ppnamount, Sp2d.pphamount, 
                                      (Sp2d.pot1num+Sp2d.pot2num+Sp2d.pot3num+Sp2d.pot4num+Sp2d.pot5num).label("potongan"),  
-                                     Sp2d.sp2dnetto, Sp2d.bknama, Sp2d.bankposnm, Sp2d.bankaccount).\
+                                     Sp2d.sp2dnetto, Sp2d.bknama, Sp2d.bankposnm, Sp2d.bankaccount,
+                                     Sp2d.npwp).\
                                join(Sp2d).\
                                filter(Sp2d.sp2dno==Sp2dAdviceDet.sp2dno,
                                       Sp2d.sp2dno.in_(request.params['data'].split(',')))

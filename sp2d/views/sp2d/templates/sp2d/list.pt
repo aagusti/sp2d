@@ -18,6 +18,7 @@
                 <th>Penerima</th>
                 <th>Bank</th>
                 <th>Account</th>
+                <th>NPWP</th>
             </tr>
         </thead>
         <tbody>
@@ -100,7 +101,8 @@
               {"width": "80px", "sClass":"right"},
               {"width": "200px", "sClass":"left"},
               {"width": "80px", "sClass":"center"},
-              {"width": "80px", "sClass":"center"},
+              {"width": "100px", "sClass":"center"},
+              {"width": "120px", "sClass":"center"},
           ],
           'rowCallback': function(row, data, dataIndex){
              // Get row ID

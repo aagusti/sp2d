@@ -370,7 +370,7 @@ class CSVRenderer(object):
             response.content_type = 'text/csv'
 
       fout = io.BytesIO() #StringIO()
-      fcsv = csv.writer(fout, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+      fcsv = csv.writer(fout, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL) #MINIMAL)
       #fcsv = UnicodeWriter(fout, delimiter=',', quotechar=',', quoting=csv.QUOTE_MINIMAL)
       #print value.get('header', [])
       fcsv.writerow(value.get('header', []))
