@@ -1,3 +1,7 @@
+import os
+import uuid
+from ...tools import row2dict, xls_reader
+from datetime import datetime
 from email.utils import parseaddr
 from sqlalchemy import not_
 from pyramid.view import (
@@ -241,3 +245,31 @@ def view_delete(request):
     return dict(row=row,
                  form=form.render())
 
+##########
+#   CSV  #
+##########    
+@view_config(route_name='user-csv', renderer='csv',
+             permission='read')
+def export_csv(request):
+    req = request
+    
+    query = DBSession.query(User.user_name,User.email)
+                                      
+    r = query.first()
+    print ">>>>>>>>>>>>>>>>>>>", query
+    header = r.keys()
+
+    query = query.all()
+    rows = []
+    for item in query:
+        rows.append(list(item))
+
+    # override attributes of response
+    filename = 'user%s.csv' % datetime.now().strftime('%Y%m%d%H%M%S')
+
+    req.response.content_disposition = 'attachment;filename=' + filename
+
+    return {
+      'header': header,
+      'rows': rows,
+    }

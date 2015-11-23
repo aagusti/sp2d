@@ -76,9 +76,12 @@ def usr_group_act(request):
         columns.append(ColumnDT('nama'))
         query = DBSession.query(User.id, User.user_name, User.email, User.status,
                                 User.last_login_date, User.registered_date,
-                                UnitModel.nama).filter(
-                                    User.id==UserUnitModel.user_id,
-                                    UnitModel.id==UserUnitModel.unit_id,
+                                UnitModel.nama
+                                ).outerjoin(UserUnitModel, User.id==UserUnitModel.user_id
+                                ).outerjoin(UnitModel, UnitModel.id==UserUnitModel.unit_id
+                                ).filter(
+                                    #User.id==UserUnitModel.user_id,
+                                    #UnitModel.id==UserUnitModel.unit_id,
                                     UserGroup.user_id==User.id,
                                     UserGroup.group_id==gid)
         
@@ -104,12 +107,12 @@ def form_validator(form, value):
 class AddSchema(colander.Schema):
     group_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/group/act/headofnama',
+            values = '/group/headofnama/act',
             min_length=1)
             
     user_widget = widget.AutocompleteInputWidget(
             size=60,
-            values = '/user/act/headofnama',
+            values = '/user/headofnama/act',
             min_length=1)
             
     user_name = colander.SchemaNode(
@@ -197,8 +200,11 @@ def view_add(request):
 ########
 def query_id(request):
     return DBSession.query(UserGroup.user_id,UserGroup.group_id, User.user_name,
-                           Group.group_name).filter(UserGroup.user_id==request.matchdict['id'],
-                                                    UserGroup.group_id==request.params['gid'])
+                           Group.group_name).filter(User.id==UserGroup.user_id,
+                                                    Group.id==UserGroup.group_id,
+                                                    UserGroup.user_id==request.matchdict['id'],
+                                                    UserGroup.group_id==request.matchdict['id2'])
+                                                    #UserGroup.group_id==request.params['gid'])
     #return DBSession.query(UserGroup).filter_by(user_id=request.matchdict['id'],
     #                                            group_id=request.params['gid'])
     
@@ -238,6 +244,7 @@ def view_edit(request):
 def view_delete(request):
     q = query_id(request)
     row = q.first()
+    print ">>>>>>>>>>>>>>>>>>>>>>>>>>", row.user_name
     if not row:
         return id_not_found(request)
     form = Form(colander.Schema(), buttons=('hapus','cancel'))
@@ -245,7 +252,8 @@ def view_delete(request):
     if request.POST:
         if 'hapus' in request.POST:
             values['user_id']  = request.matchdict['id']
-            values['group_id'] = request.params['gid']
+            #values['group_id'] = request.params['gid']
+            values['group_id'] = request.matchdict['id2']
             
             msg = 'User ID %s group %s sudah dihapus.' % (row.user_name, row.group_name)
             DBSession.query(UserGroup).filter(UserGroup.user_id==values['user_id'],

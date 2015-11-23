@@ -213,3 +213,30 @@ class view_group(BaseViews):
         return dict(row=row,
                      form=form.render())
 
+    ##########                    
+    # CSV #
+    ##########    
+        
+    @view_config(route_name='group-csv', renderer='csv',
+                 permission='read')
+    def export_csv(self):
+        request = self.request
+        
+        query = DBSession.query(Group.group_name.label('kode'), Group.description, Group.member_count.label('anggota'))
+                                          
+        r = query.first()
+        header = r.keys()
+        query = query.all()
+        rows = []
+        for item in query:
+            rows.append(list(item))
+
+        # override attributes of response
+        filename = 'group%s.csv' % datetime.now().strftime('%Y%m%d%H%M%S')
+
+        self.request.response.content_disposition = 'attachment;filename=' + filename
+
+        return {
+          'header': header,
+          'rows': rows,
+        }

@@ -55,3 +55,8 @@ id,kode,nama,path,perm_name,disabled,created,create_uid
 62,"user-unit-add","Tambah User unit","/user/unit/add","red",0,"2015-03-08 16:45:45",1
 63,"user-unit-edit","Edit User unit","/user/unit/{id}/edit","red",0,"2015-03-08 16:45:45",1
 64,"user-unit-delete","Hapus User unit","/user/unit/{id}/delete","red",0,"2015-03-08 16:45:45",1
+65,"user-csv","User CSV","/user/csv","''",0,"2015-03-08 16:45:45",1
+66,"routes-csv","Routes CSV","/routes/csv","''",0,"2015-03-08 16:45:45",1
+67,"group-csv","Group CSV","/group/csv","''",0,"2015-03-08 16:45:45",1
+68,"group-routes-csv","Group Routes CSV","/group/routes/csv","''",0,"2015-03-08 16:45:45",1
+69,"app-csv","Aplication CSV","/app/csv","''",0,"2015-03-08 16:45:45",1
