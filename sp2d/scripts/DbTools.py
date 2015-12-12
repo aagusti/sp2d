@@ -21,7 +21,7 @@ SQL_TABLE = """
 SELECT c.oid, n.nspname, c.relname
   FROM pg_catalog.pg_class c
   LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-  WHERE c.relname = :table_name
+  WHERE c.relname = '{table_name}'
     AND pg_catalog.pg_table_is_visible(c.oid)
   ORDER BY 2, 3
 """
@@ -61,8 +61,10 @@ def table_seq(table):
         sql = text(SQL_TABLE_SCHEMA)
         q = engine.execute(sql, schema=table.schema, table_name=table.name)
     else:
-        sql = text(SQL_TABLE)
-        q = engine.execute(sql, table_name=table.name)    
+        sql = SQL_TABLE.format(table_name=table.name)
+        q = engine.execute(sql)
+        #sql = text(SQL_TABLE)
+        #q = engine.execute(sql, table_name=table.name)    
     r = q.fetchone()
     table_id = r.oid
     sql = text(SQL_FIELDS)
