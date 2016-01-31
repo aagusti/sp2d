@@ -1,0 +1,7 @@
+id,kode,nama,path,perm_name,disabled,created,create_uid
+95001,"sp2d-sipkd","SP2D","/sp2d/sipkd","red",0,"2015-03-08 16:45:45",1
+95002,"sp2d-sipkd-act","SP2D Action","/sp2d/sipkd/{act}/act","red",0,"2015-03-08 16:45:45",1
+95003,"sp2d-sipkd-add","SP2D Add","/sp2d/sipkd/add","red",0,"2015-03-08 16:45:45",1
+95004,"sp2d-sipkd-edit","SP2D Edit","/sp2d/sipkd/{id}/edit","red",0,"2015-03-08 16:45:45",1
+95005,"sp2d-sipkd-delete","SP2D Delete","/sp2d/sipkd/{id}/delete","red",0,"2015-03-08 16:45:45",1
+95006,"sp2d-sipkd-csv","SP2D CSV","/sp2d/sipkd/csv","red",0,"2015-03-08 16:45:45",1

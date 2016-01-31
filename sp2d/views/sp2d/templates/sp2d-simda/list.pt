@@ -1,0 +1,272 @@
+<html metal:use-macro="load: ../base.pt">
+  <div metal:fill-slot="content">
+    <h4>${request.title}</h4>
+    <hr>
+    <table id="table1" class="table table-bordered table-hover table-condensed">
+        <thead>
+            <tr>
+                <th><input type="checkbox" value="1" id="checkAll" name="checkAll"></th>
+                <th>SP2D</th>
+                <th>Tanggal</th>
+                <th>Uraian</th>
+                <th>Total</th>
+                <th>PPn</th>
+                <th>PPh</th>
+                <th>Potongan</th>
+                <th>Netto</th>
+                <th>Penerima</th>
+                <th>Bank</th>
+                <th>Account</th>
+                <th>NPWP</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+  </div>
+  
+  <div metal:fill-slot="scripts">
+    <script>
+      var mID;
+      var mThn;
+      var oTable;
+      var iPos;
+      var oTableUrl = "/sp2d/simda";
+      var rows_selected = [];
+
+      Number.prototype.formatMoney = function(decPlaces, thouSeparator, decSeparator) {
+        var n = this,
+            decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
+            decSeparator = decSeparator == undefined ? "." : decSeparator,
+            thouSeparator = thouSeparator == undefined ? "," : thouSeparator,
+            sign = n < 0 ? "-" : "",
+            i = parseInt(n = Math.abs(+n || 0).toFixed(decPlaces)) + "",
+            j = (j = i.length) > 3 ? j % 3 : 0;
+        return sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
+      };
+
+        
+      $(document).ready(function () {
+        oTable = $('#table1').DataTable({
+          "bStateSave":true,
+          "sDom": '<"toolbar">lfrtip',
+          "sAjaxSource": oTableUrl+'/grid/act',
+          "bServerSide": true,
+          "bProcessing": true,
+          "scrollX": true,
+          "bSort": true,
+          "bInfo": false,
+          "bFilter": true,
+          "bPaginate": true,
+          "sPaginationType": "full_numbers",
+          "order": [[ 1, "desc" ]],
+          /*
+          "bScrollCollapse": true,
+          "bAutoWidth": false,
+          */
+          "lengthMenu": [
+              [10, 25, 50, 100],
+              [10, 25, 50, 100]
+          ],
+          "aoColumnDefs": [{
+                        "bSearchable": true,
+                        "bVisible": true,
+                        "aTargets": [1,2,3,11]
+                         },{
+                        "bSearchable": false,
+                        "bVisible": true,
+                        "bSortable": false,
+                        "aTargets": [0,3,5,6,7,8,9,10,11]
+                        },{
+                         'targets': 0,
+                         'searchable': false,
+                         'orderable': false,
+                         'className': 'dt-body-center',
+                         'render': function (data, type, full, meta){
+                             return '<input type="checkbox">';
+                         }
+                      }
+                    ],
+          "aoColumns": [
+              {"width": "30px", "sClass":"center"},
+              {"width": "80px"},
+              {"width": "75px"},
+              {"width": "300px", "sClass":"left"},
+              {"width": "80px", "sClass":"right"},
+              {"width": "80px", "sClass":"right"},
+              {"width": "80px", "sClass":"right"},
+              {"width": "80px", "sClass":"right"},
+              {"width": "80px", "sClass":"right"},
+              {"width": "200px", "sClass":"left"},
+              {"width": "80px", "sClass":"center"},
+              {"width": "100px", "sClass":"center"},
+              {"width": "120px", "sClass":"center"},
+          ],
+          'rowCallback': function(row, data, dataIndex){
+             // Get row ID
+             var rowId = data[0];
+
+             // If row ID is in the list of selected row IDs
+             if($.inArray(rowId, rows_selected) !== -1){
+                $(row).find('input[type="checkbox"]').prop('checked', true);
+                $(row).addClass('selected');
+             }
+          }
+      
+        });
+          
+        var tb_array = [
+          '<div class="btn-group pull-left">',
+          '	<!--button id="btn_add" class="btn btn btn-primary" type="button">Tambah</button>',
+          '	<button id="btn_edit" class="btn btn btn-primary" type="button">Edit</button>',
+          '	<button id="btn_delete" class="btn btn btn-danger" type="button">Hapus</button>',
+          '	<button id="btn_pdf" class="btn btn btn-warning" type="button">PDF</button-->',
+          '	<button id="btn_csv" class="btn btn btn-primary" type="button">Export to CSV</button>',
+          '	&nbsp;',
+          '</div>',
+        ];
+
+
+        var tb = tb_array.join(' ');
+        $("div.toolbar").html(tb);
+        $("div.toolbar").attr('style', 'display:block; float: left; margin-bottom:6px; line-height:16px;');
+        
+        $('#btn_add').click(function () {
+            window.location = oTableUrl+'/add';
+        });
+
+        $('#btn_edit').click(function () {
+            if (mID) window.location = oTableUrl+'/'+mID+'/edit';
+            else alert('Pilih Baris yang akan di edit');
+        });
+
+        $('#btn_delete').click(function () {
+            if (mID) window.location = oTableUrl+'/'+mID+'/delete';
+            else alert('Pilih Baris yang akan di hapus');
+        });
+        $('#btn_csv').click(function () {
+            if (rows_selected.length>0){
+                window.location = oTableUrl+'/csv?data='+rows_selected;
+                rows_selected = [];
+                $('#table1 tbody input[type="checkbox"]:checked').trigger('click');
+            }
+            else alert('Pilih Baris yang akan di export');
+        });
+        $("#checkAll").click(function () {
+          $('#table1 tbody input[type="checkbox"]').prop('checked', this.checked);
+        });
+    
+       $('#table1 tbody').on('click', 'input[type="checkbox"]', function(e){
+
+          var $row = $(this).closest('tr');
+
+          // Get row data
+          var data = oTable.row($row).data();
+
+          // Get row ID
+          var rowId = data[0];
+
+          // Determine whether row ID is in the list of selected row IDs 
+          var index = $.inArray(rowId, rows_selected);
+
+          // If checkbox is checked and row ID is not in list of selected row IDs
+          if(this.checked && index === -1){
+             rows_selected.push(rowId);
+
+          // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+          } else if (!this.checked && index !== -1){
+             rows_selected.splice(index, 1);
+          }
+
+          if(this.checked){
+             $row.addClass('selected');
+          } else {
+             $row.removeClass('selected');
+          }
+
+          // Update state of "Select all" control
+          updateDataTableSelectAllCtrl(oTable);
+
+          // Prevent click event from propagating to parent
+          e.stopPropagation();
+       });
+
+       // Handle click on table cells with checkboxes
+       $('#table1').on('click', 'tbody td, thead th:first-child', function(e){
+          $(this).parent().find('input[type="checkbox"]').trigger('click');
+       });
+
+       // Handle click on "Select all" control
+       $('#table1 thead input[name="checkAll"]').on('click', function(e){
+          if(this.checked){
+             $('#table1 tbody input[type="checkbox"]:not(:checked)').trigger('click');
+          } else {
+             $('#table1 tbody input[type="checkbox"]:checked').trigger('click');
+          }
+
+          // Prevent click event from propagating to parent
+          e.stopPropagation();
+       });
+
+       // Handle table draw event
+       oTable.on('draw', function(){
+          // Update state of "Select all" control
+          updateDataTableSelectAllCtrl(oTable);
+       });
+
+       // Handle form submission event 
+       $('#frm-example').on('submit', function(e){
+          var form = this;
+          
+          // Iterate over all selected checkboxes
+          $.each(rows_selected, function(index, rowId){
+             // Create a hidden element 
+             $(form).append(
+                 $('<input>')
+                    .attr('type', 'hidden')
+                    .attr('name', 'id[]')
+                    .val(rowId)
+             );
+          });
+       });
+
+    });        
+        
+/************************************************************************************************************/
+//
+// Updates "Select all" control in a data table
+//
+function updateDataTableSelectAllCtrl(table){
+   var $table             = table.table().node();
+   var $chkbox_all        = $('tbody input[type="checkbox"]', $table);
+   var $chkbox_checked    = $('tbody input[type="checkbox"]:checked', $table);
+   var chkbox_select_all  = $('thead input[name="checkAll"]', $table).get(0);
+
+   // If none of the checkboxes are checked
+   if($chkbox_checked.length === 0){
+      chkbox_select_all.checked = false;
+      if('indeterminate' in chkbox_select_all){
+         chkbox_select_all.indeterminate = false;
+      }
+
+   // If all of the checkboxes are checked
+   } else if ($chkbox_checked.length === $chkbox_all.length){
+      chkbox_select_all.checked = true;
+      if('indeterminate' in chkbox_select_all){
+         chkbox_select_all.indeterminate = false;
+      }
+
+   // If some of the checkboxes are checked
+   } else {
+      chkbox_select_all.checked = true;
+      if('indeterminate' in chkbox_select_all){
+         chkbox_select_all.indeterminate = true;
+      }
+   }
+}
+
+
+    </script>
+  </div>
+  
+</html>

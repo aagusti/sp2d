@@ -47,10 +47,10 @@ class Sp2dAdviceDet(SipkdBase):
     bpph23      = Column(Numeric)
     nossp       = Column(String(250)) 
     tglsetor    = Column(DateTime)
-    sp2d        = relationship("Sp2d", backref="advicedet")
+    #sp2d        = relationship("Sp2d", backref="advicedet")
 
 class Sp2d(SipkdBase):
-    __tablename__  = 'sp2d'
+    __tablename__  = 'sp2ds'
     #__table_args__ = {'extend_existing':True,'autoload':True}   
     sp2dno             = Column(String(30), nullable=False, primary_key=True)
     sp2ddate           = Column(DateTime)

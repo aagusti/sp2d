@@ -14,6 +14,8 @@ from data.route_eis import RouteEISData
 from data.routes import RouteData
 from data.apps import AppsData
 from data.route_sp2d import RouteSP2DData
+from data.route_sp2d_simda import RouteSP2DSimdaData
+from data.route_sp2d_sipkd import RouteSP2DSipkdData
 
 from DbTools import (
     get_pkeys,
@@ -38,6 +40,8 @@ fixtures = [
     #('routes_ak', RouteAKData),
     #('routes_eis', RouteEISData),
     ('routes_sp2d', RouteSP2DData),
+    ('routes_sp2d_simda', RouteSP2DSimdaData),
+    ('routes_sp2d_sipkd', RouteSP2DSipkdData),
     ]
 
 def insert():
